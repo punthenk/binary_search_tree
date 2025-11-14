@@ -1,0 +1,15 @@
+85|Finish Rust binary tree project|TODO
+70|Study for math exam on Friday|TODO
+90|Submit assignment before deadline|TODO
+45|Buy groceries for the week|DONE
+60|Call mom to check in|TODO
+95|Fix critical bug in production code|TODO
+30|Water the plants|DONE
+75|Read chapter 5 of programming book|TODO
+50|Clean room|TODO
+80|Prepare presentation for Monday|TODO
+20|Watch tutorial on Rust lifetimes|TODO
+65|Reply to important emails|TODO
+40|Organize desk|TODO
+55|Backup computer files|DONE
+25|Update resume|TODO
