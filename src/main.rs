@@ -58,6 +58,16 @@ impl TaskTree {
         false
     }
 
+    fn find_task(&self, priority: u32) -> Option<&Task> {
+        if priority == self.task.priority {
+            Some(&self.task)
+        } else if priority < self.task.priority {
+            self.left.as_ref()?.find_task(priority)
+        } else {
+            self.right.as_ref()?.find_task(priority)
+        }
+    }
+
     fn display_all(&self) {
         if let Some(right) = &self.right {
             right.display_all();
@@ -80,7 +90,6 @@ fn load_tasks(filename: &str) -> Option<TaskTree> {
             let parts: Vec<&str> = line.split('|').collect();
             if parts.len() == 3 {
                 if let Ok(priority) = parts[0].parse::<u32>() {
-                    println!("{}", priority);
                     let description = parts[1].to_string();
                     let completed = parts[2] == "DONE";
 
@@ -108,6 +117,17 @@ fn main() {
     
     if let Some(tree) = &task_tree {
         tree.display_all();
+    } else {
+        println!("No tasks found");
+    }
+
+    if let Some(tree) = &task_tree {
+        let result = tree.find_task(202);
+        if result.is_some() {
+            println!("Found {}, description: {}", result.unwrap().priority, result.unwrap().description);
+        } else {
+            println!("Could not find the task");
+        }
     } else {
         println!("No tasks found");
     }
