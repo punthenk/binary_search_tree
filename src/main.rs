@@ -1,4 +1,7 @@
+use std::array;
 use std::fs;
+use std::io;
+use std::io::Write;
 
 #[derive(Debug, Clone)]
 struct Task {
@@ -112,6 +115,30 @@ fn load_tasks(filename: &str) -> Option<TaskTree> {
     None
 }
 
+fn add_task() -> (u32, String) {
+    let mut description = String::new();
+    print!("name: ");
+    io::stdout().flush().unwrap();
+    io::stdin()
+        .read_line(&mut description)
+        .expect("Not found");
+
+
+    let mut priority = String::new();
+    print!("priority: ");
+    io::stdout().flush().unwrap();
+    io::stdin()
+        .read_line(&mut priority)
+        .expect("Not found");
+
+    println!("\ndescription: {}", description);
+    println!("priority: {}", priority);
+
+    let priority_u32: u32 = priority.trim().parse().unwrap();
+
+    return (priority_u32, description);
+}
+
 fn main() {
     let mut task_tree: Option<TaskTree> = load_tasks("tasks.txt");
     
@@ -122,7 +149,7 @@ fn main() {
     }
 
     if let Some(tree) = &task_tree {
-        let result = tree.find_task(202);
+        let result = tree.find_task(108);
         if result.is_some() {
             println!("Found {}, description: {}", result.unwrap().priority, result.unwrap().description);
         } else {
@@ -130,5 +157,42 @@ fn main() {
         }
     } else {
         println!("No tasks found");
+    }
+
+    loop {
+        print!("> ");
+        io::stdout().flush().unwrap();
+
+        let mut input = String::new();
+
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line");
+        
+        let input = input.trim();
+        if input == "" {
+            continue;
+        } else if input == "quit" {
+            break;
+        }
+
+        match input {
+            "add" => {
+                let values = add_task();
+                let priority = values.0;
+                let description = values.1;
+                if let Some(tree) = &mut task_tree {
+                    tree.insert(priority, description);
+                }
+            },
+            "all" | "display" => {
+                if let Some(tree) = &task_tree {
+                    tree.display_all();
+                }
+            }
+            _ => println!("Dont know?"),
+        }
+
+        // match input 
     }
 }
