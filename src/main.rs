@@ -31,6 +31,11 @@ impl TaskTree {
     }
 
     fn insert(&mut self, priority: u32, description: String) {
+        if priority == self.task.priority {
+            println!("Found the same priority");
+            return;
+        }
+
         if priority < self.task.priority {
             match &mut self.left {
                 None => self.left = Some(Box::new(TaskTree::new(priority, description))),
@@ -44,16 +49,16 @@ impl TaskTree {
         }
     }
 
-    fn insert_into_file(&self, filename: &str, priority: u32, description: String) {
+    fn insert_into_file(&self, filename: &str) {
         let mut file = OpenOptions::new()
             .create(true)
             .append(true)
             .open(filename)
             .expect("Failed to open file");
 
-        let line = format!("{}|{}|{}", priority, description, "TODO");
+        let line = format!("\n{}|{}|TODO", self.task.priority.to_string(), self.task.description.trim());
 
-        file.write_all(line.as_bytes())
+        file.write(line.as_bytes())
             .expect("Unable to write");
     }
 
@@ -208,7 +213,9 @@ fn main() {
                 let priority = values.0;
                 let description = values.1;
                 if let Some(tree) = &mut task_tree {
-                    tree.insert(priority, description);
+                    tree.insert(priority, description.clone());
+                    let new_task = TaskTree::new(priority, description);
+                    new_task.insert_into_file("tasks.txt");
                 }
             },
             "all" | "display" | "ls" => {
