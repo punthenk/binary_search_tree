@@ -54,7 +54,6 @@
 164|Review cloud architecture diagram|TODO
 182|Fix layout issues on landing page|TODO
 148|Organize digital notes|TODO
-123|Watch conference talk on system design|TODO
 193|Refactor state management logic|TODO
 138|Start drafting short story|TODO
 126|Try new recipe for dinner|DONE
@@ -105,3 +104,13 @@
 187|Review security vulnerabilities|TODO
 197|Read research about blockchains|TODO
 175|Research functional programming concepts|TODO
+100|test|TODO
+123|another test|TODO
+90|very test|TODO
+203|this must be the highest|TODO
+204|test|TODO
+205|test|TODO
+300|test|TODO
+400|test|TODO
+401|another test|TODO
+9|test|TODO
