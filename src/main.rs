@@ -1,3 +1,4 @@
+use core::num;
 use std::array;
 use std::fs;
 use std::io;
@@ -122,7 +123,8 @@ fn add_task() -> (u32, String) {
     io::stdin()
         .read_line(&mut description)
         .expect("Not found");
-
+    
+    let description = description.trim().to_string();
 
     let mut priority = String::new();
     print!("priority: ");
@@ -134,7 +136,19 @@ fn add_task() -> (u32, String) {
     println!("\ndescription: {}", description);
     println!("priority: {}", priority);
 
-    let priority_u32: u32 = priority.trim().parse().unwrap();
+    let priority_u32: u32 = loop {
+        match priority.trim().parse() {
+            Ok(num) => break num,
+            Err(_) => {
+                println!("Not a number. Try again");
+                print!("priority: ");
+                io::stdout().flush().unwrap();
+                let mut new_input = String::new();
+                io::stdin().read_line(&mut new_input).unwrap();
+                priority = new_input;
+            }
+        }
+    };
 
     return (priority_u32, description);
 }
@@ -185,14 +199,12 @@ fn main() {
                     tree.insert(priority, description);
                 }
             },
-            "all" | "display" => {
+            "all" | "display" | "ls" => {
                 if let Some(tree) = &task_tree {
                     tree.display_all();
                 }
             }
             _ => println!("Dont know?"),
         }
-
-        // match input 
     }
 }
