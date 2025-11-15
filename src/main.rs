@@ -7,7 +7,7 @@ use tree::TaskTree;
 use file_io::{load_tasks, insert_into_file};
 use ui::{ask_task_input, get_command};
 
-use crate::ui::ask_task_priority;
+use crate::{file_io::mark_complete_in_file, ui::ask_task_priority};
 
 
 
@@ -60,6 +60,7 @@ fn main() {
                 let priority = ask_task_priority();
                 if let Some(tree) = &mut task_tree {
                     tree.mark_complete(priority);
+                    mark_complete_in_file("tasks.txt", priority);
                 }
             }
             _ => println!("Dont know?"),
