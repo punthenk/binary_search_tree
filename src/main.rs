@@ -1,6 +1,5 @@
-use core::num;
-use std::array;
 use std::fs;
+use std::fs::OpenOptions;
 use std::io;
 use std::io::Write;
 
@@ -43,6 +42,19 @@ impl TaskTree {
                 Some(node) => node.insert(priority, description),
             }
         }
+    }
+
+    fn insert_into_file(&self, filename: &str, priority: u32, description: String) {
+        let mut file = OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(filename)
+            .expect("Failed to open file");
+
+        let line = format!("{}|{}|{}", priority, description, "TODO");
+
+        file.write_all(line.as_bytes())
+            .expect("Unable to write");
     }
 
     fn mark_complete(&mut self, priority: u32,) -> bool {
@@ -116,7 +128,7 @@ fn load_tasks(filename: &str) -> Option<TaskTree> {
     None
 }
 
-fn add_task() -> (u32, String) {
+fn add_task_input() -> (u32, String) {
     let mut description = String::new();
     print!("name: ");
     io::stdout().flush().unwrap();
@@ -124,7 +136,7 @@ fn add_task() -> (u32, String) {
         .read_line(&mut description)
         .expect("Not found");
     
-    let description = description.trim().to_string();
+
 
     let mut priority = String::new();
     print!("priority: ");
@@ -192,7 +204,7 @@ fn main() {
 
         match input {
             "add" => {
-                let values = add_task();
+                let values = add_task_input();
                 let priority = values.0;
                 let description = values.1;
                 if let Some(tree) = &mut task_tree {
