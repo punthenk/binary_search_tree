@@ -75,4 +75,27 @@ impl TaskTree {
             left.display_all();
         }
     }
+pub fn build_balanced_tree(tasks: &[(u32, String, bool)]) -> Option<TaskTree> {
+    if tasks.is_empty() {
+        return None;
+    }
+
+    let mid = tasks.len() / 2;
+    let (priority, description, completed) = &tasks[mid];
+
+    let mut tree = TaskTree::new(*priority, description.clone());
+
+    if mid > 0 {
+        tree.left = build_balanced_tree(&tasks[0..mid]).map(Box::new);
+    }
+
+    if mid + 1 < tasks.len() {
+        tree.right = build_balanced_tree(&tasks[mid + 1..]).map(Box::new);
+    }
+
+    if *completed {
+        tree.mark_complete(*priority);
+    }
+
+    Some(tree)
 }

@@ -1,6 +1,6 @@
 use std::fs::{self, OpenOptions};
 use std::io::{self, Write};
-use crate::tree::TaskTree;
+use crate::tree::{TaskTree, build_balanced_tree};
 
 
 pub fn insert_into_file(filename: &str, priority: u32, description: String) {
@@ -51,7 +51,7 @@ pub fn mark_complete_in_file(filename: &str, priority: u32) -> bool {
 
 pub fn load_tasks(filename: &str) -> Option<TaskTree> {
     if let Ok(content) = fs::read_to_string(filename) {
-        let mut tree: Option<TaskTree> = None;
+        let mut tasks = Vec::new();
 
         for line in content.lines() {
             let parts: Vec<&str> = line.split('|').collect();
@@ -59,20 +59,14 @@ pub fn load_tasks(filename: &str) -> Option<TaskTree> {
                 if let Ok(priority) = parts[0].parse::<u32>() {
                     let description = parts[1].to_string();
                     let completed = parts[2] == "DONE";
-
-                    match &mut tree {
-                        None => tree = Some(TaskTree::new(priority, description)),
-                        Some(node) => node.insert(priority, description),
-                    }
-
-                    if completed {
-                        if let Some(node) = &mut tree {
-                            node.mark_complete(priority);
-                        }
-                    }
+                    tasks.push((priority, description, completed));
                 }
             }
         }
+
+        tasks.sort_by_key(|task| task.0);
+        let tree = build_balanced_tree(&tasks);
+
         println!("✓ Tasks loaded from {}", filename);
         return tree;
     }
