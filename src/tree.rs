@@ -1,3 +1,5 @@
+use std::usize;
+
 use crate::task::Task;
 
 pub struct TaskTree {
@@ -75,6 +77,93 @@ impl TaskTree {
             left.display_all();
         }
     }
+
+    pub fn display_tree_horizontal(&self, indent: usize, is_right: bool) {
+        if let Some(right) = &self.right {
+            right.display_tree_horizontal(indent + 4, true);
+        }
+
+        print!("{}", " ".repeat(indent));
+        if indent > 0 {
+            print!("{} ", if is_right { "┌──" } else { "└──" });
+        }
+
+        println!("[{}]", self.task.priority());
+
+        if let Some(left) = &self.left {
+            left.display_tree_horizontal(indent + 4, false);
+        }
+    }
+
+    pub fn display_tree_vertical(&self) {
+        let mut levels: Vec<Vec<Option<u32>>> = Vec::new();
+        collect_levels(Some(self), &mut levels, 0);
+
+        let max_depth = levels.len();
+        let base_width = 1; // Width per node
+
+        for (depth, level) in levels.iter().enumerate() {
+            // Calculate spacing for this level
+            let spaces_between = base_width * (max_depth - depth);
+            let leading_spaces = spaces_between / 2;
+
+            // Print leading spaces
+            print!("{}", " ".repeat(leading_spaces));
+
+            // Print each node with spacing
+            for (i, node) in level.iter().enumerate() {
+                match node {
+                    Some(priority) => print!("{:^3}", priority), // Center in 3 chars
+                    None => print!("   "), // Empty space
+                }
+
+                // Add spacing between nodes (except after last)
+                if i < level.len() - 1 {
+                    print!("{}", " ".repeat(spaces_between));
+                }
+            }
+
+            println!(); // New line after each level
+            // After printing a level, print the branches
+            if depth < max_depth - 1 {
+                print!("{}", " ".repeat(leading_spaces - 1));
+
+                for (i, _) in level.iter().enumerate() {
+                    print!("/");
+                    print!("{}", " ".repeat(spaces_between - 2));
+                    print!("\\");
+
+                    if i < level.len() - 1 {
+                        print!("{}", " ".repeat(spaces_between));
+                    }
+                }
+                println!();
+            }
+        }
+    }
+}
+
+fn collect_levels(node: Option<&TaskTree>, levels: &mut Vec<Vec<Option<u32>>>, depth: usize) {
+    if levels.len() <= depth {
+        levels.push(Vec::new());
+    }
+
+    match node {
+        Some(tree) => {
+            // Add this node's priority to its level
+            levels[depth].push(Some(tree.task.priority()));
+
+            // Recursively add children to next level
+            collect_levels(tree.left.as_deref(), levels, depth + 1);
+            collect_levels(tree.right.as_deref(), levels, depth + 1);
+        }
+        None => {
+            // Add None to maintain tree structure
+            levels[depth].push(None);
+        }
+    }
+}
+
 pub fn build_balanced_tree(tasks: &[(u32, String, bool)]) -> Option<TaskTree> {
     if tasks.is_empty() {
         return None;
