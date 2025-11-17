@@ -7,7 +7,7 @@ use tree::TaskTree;
 use file_io::{load_tasks, insert_into_file};
 use ui::{ask_task_input, get_command};
 
-use crate::{file_io::mark_complete_in_file, ui::ask_task_priority};
+use crate::{file_io::{mark_complete_in_file, mark_uncomplete_in_file}, ui::ask_task_priority};
 
 
 fn main() {
@@ -72,6 +72,13 @@ fn main() {
                     mark_complete_in_file("tasks.txt", priority);
                 }
             },
+            "uncheck" => {
+                let priority = ask_task_priority();
+                if let Some(tree) = &mut task_tree {
+                    tree.mark_uncomplete(priority);
+                    mark_uncomplete_in_file("tasks.txt", priority);
+                }
+            }
             "tree" | "htree" => {
                 if let Some(tree) = &task_tree {
                     tree.display_tree_horizontal(0, false);

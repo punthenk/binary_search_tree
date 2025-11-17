@@ -38,7 +38,7 @@ impl TaskTree {
         }
     }
 
-    pub fn mark_complete(&mut self, priority: u32,) -> bool {
+    pub fn mark_complete(&mut self, priority: u32) -> bool {
         if priority == self.task.priority() {
             self.task.set_completed();
             return true;
@@ -46,10 +46,25 @@ impl TaskTree {
             if let Some(node) = &mut self.left {
                 return node.mark_complete(priority);
             }
-
         } else {
             if let Some(node) = &mut self.right {
                 return node.mark_complete(priority)
+            }
+        }
+        false
+    }
+
+    pub fn mark_uncomplete(&mut self, priority: u32) -> bool {
+        if priority == self.task.priority() {
+            self.task.set_uncompleted();
+            return true;
+        } else if priority < self.task.priority() {
+            if let Some(node) = &mut self.left {
+                return node.mark_uncomplete(priority)
+            }
+        } else {
+            if let Some(node) = &mut self.right {
+                return node.mark_uncomplete(priority)
             }
         }
         false

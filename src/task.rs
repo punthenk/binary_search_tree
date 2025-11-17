@@ -30,6 +30,10 @@ impl Task {
         self.completed = true;
     }
 
+    pub fn set_uncompleted(&mut self) {
+        self.completed = false;
+    }
+
     pub fn display(&self) {
         let status = if self.is_completed() { "✓" } else { " " };
         println!("[{}] Priority {}: {}", status, self.priority(), self.description());
