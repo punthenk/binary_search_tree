@@ -50,6 +50,16 @@ fn main() {
                     insert_into_file("tasks.txt", priority, description);
                 }
             },
+            "find" => {
+                let priority = ask_task_priority();
+                if let Some(tree) = &task_tree {
+                    if let Some(task) = tree.find_task(priority) {
+                        task.display();
+                    } else {
+                        println!("Task not found");
+                    }
+                }
+            },
             "all" | "display" | "ls" => {
                 if let Some(tree) = &task_tree {
                     tree.display_all();
