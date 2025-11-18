@@ -19,17 +19,6 @@ fn main() {
         println!("No tasks found");
     }
 
-    if let Some(tree) = &task_tree {
-        let result = tree.find_task(108);
-        if result.is_some() {
-            println!("Found {}, description: {}", result.unwrap().priority(), result.unwrap().description());
-        } else {
-            println!("Could not find the task");
-        }
-    } else {
-        println!("No tasks found");
-    }
-
     loop {
         let input = get_command();
         
@@ -58,6 +47,12 @@ fn main() {
                     } else {
                         println!("Task not found");
                     }
+                }
+            },
+            "rm" | "remove" => {
+                let priority = ask_task_priority();
+                if let Some(tree) = task_tree.take() {
+                    task_tree = Box::new(tree).delete(priority).map(|boxed| *boxed);
                 }
             },
             "all" | "display" | "ls" => {

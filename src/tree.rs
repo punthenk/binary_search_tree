@@ -38,6 +38,23 @@ impl TaskTree {
         }
     }
 
+    // HOLY MOLY I am littely working on this the entire day and now it finally works a little!!!
+    // This was by far the hardest thing I did in this project so far
+    pub fn delete(mut self: Box<Self>, priority: u32) -> Option<Box<TaskTree>> {
+        if priority < self.task.priority() {
+            self.left = self.left.and_then(|left| left.delete(priority));
+            Some(self)
+        } else if priority > self.task.priority() {
+            self.right = self.right.and_then(|right| right.delete(priority));
+            Some(self)
+        } else {
+            if self.left.is_none() && self.right.is_none() {
+                return None;
+            }
+            Some(self)
+        }
+    }
+
     pub fn mark_complete(&mut self, priority: u32) -> bool {
         if priority == self.task.priority() {
             self.task.set_completed();
