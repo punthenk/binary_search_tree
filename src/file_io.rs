@@ -1,4 +1,4 @@
-use std::fs::{self, OpenOptions};
+use std::fs::{self, File, OpenOptions};
 use std::io::{Write};
 use crate::tree::{TaskTree, build_balanced_tree};
 
@@ -14,6 +14,20 @@ pub fn insert_into_file(filename: &str, priority: u32, description: String) {
 
     file.write(line.as_bytes())
         .expect("Unable to write");
+}
+
+pub fn delete_from_file(filename: &str, priority: u32) -> std::io::Result<()> {
+    let contents = fs::read_to_string(filename)?;
+    let priority_str = priority.to_string();
+
+    let filtered: String = contents
+        .lines()
+        .filter(|line| !line.contains(&priority_str))
+        .map(|line| format!("{}\n", line))
+        .collect();
+
+    fs::write(filename, filtered)?;
+    Ok(())
 }
 
 pub fn mark_complete_in_file(filename: &str, priority: u32) -> bool {

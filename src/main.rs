@@ -7,7 +7,7 @@ use tree::TaskTree;
 use file_io::{load_tasks, insert_into_file};
 use ui::{ask_task_input, get_command};
 
-use crate::{file_io::{mark_complete_in_file, mark_uncomplete_in_file}, ui::ask_task_priority};
+use crate::{file_io::{delete_from_file, mark_complete_in_file, mark_uncomplete_in_file}, ui::ask_task_priority};
 
 fn handle_command(input: &str, task_tree: &mut Option<TaskTree>) -> bool {
     match input {
@@ -35,6 +35,7 @@ fn handle_command(input: &str, task_tree: &mut Option<TaskTree>) -> bool {
             let priority = ask_task_priority();
             if let Some(tree) = task_tree.take() {
                 *task_tree = Box::new(tree).delete(priority).map(|boxed| *boxed);
+                let result = delete_from_file("tasks.txt", priority);
             }
         },
         "all" | "display" | "ls" => {
