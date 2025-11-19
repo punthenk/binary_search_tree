@@ -40,8 +40,8 @@ pub fn ask_task_priority() -> u32 {
 }
 
 
-pub fn get_command() -> String {
-    print!("> ");
+pub fn get_command(prompt: &str) -> String {
+    print!("{} ", prompt);
     io::stdout().flush().unwrap();
 
     let mut input = String::new();

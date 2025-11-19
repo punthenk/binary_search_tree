@@ -78,7 +78,7 @@ fn live_tree_mode(task_tree: &mut Option<TaskTree>) {
             tree.display_tree_horizontal(0, false);
         }
 
-        let input = get_command();
+        let input = get_command("live >");
         let input = input.trim();
         if input.is_empty() {
             continue;
@@ -101,7 +101,7 @@ fn main() {
     }
 
     loop {
-        let input = get_command();
+        let input = get_command(">");
         let input = input.trim();
 
         if input.is_empty() {
