@@ -48,9 +48,33 @@ impl TaskTree {
             self.right = self.right.and_then(|right| right.delete(priority));
             Some(self)
         } else {
+            // No child so can just delete node
             if self.left.is_none() && self.right.is_none() {
                 return None;
             }
+
+            // Only left child, replace with left
+            if self.left.is_none() {
+                return self.right.take();
+            }
+
+            // Only right child, replace with right
+            if self.right.is_none() {
+                return self.left.take();
+            }
+
+            let successor = find_min(self.right.as_ref().unwrap());
+            let successor_priority = successor.task.priority();
+            let successor_desc = successor.task.description().to_string();
+            let successor_completed = successor.task.is_completed();
+
+            self.task = Task::new(successor_priority, successor_desc);
+            if successor_completed {
+                self.task.set_completed();
+            }
+
+            self.right = self.right.and_then(|right| right.delete(successor_priority));
+
             Some(self)
         }
     }
@@ -219,4 +243,12 @@ pub fn build_balanced_tree(tasks: &[(u32, String, bool)]) -> Option<TaskTree> {
     }
 
     Some(tree)
+}
+
+fn find_min(node: &TaskTree) -> &TaskTree {
+    if let Some(left) = &node.left {
+        find_min(left)
+    } else {
+        node
+    }
 }
