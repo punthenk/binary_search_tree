@@ -12,6 +12,7 @@ use crate::{file_io::{delete_from_file, mark_complete_in_file, mark_uncomplete_i
 fn handle_command(input: &str, task_tree: &mut Option<TaskTree>) -> bool {
     match input {
         "quit" | "exit" => return true,
+        "clear" => println!("\x1B[2J\x1B[1;1H"),
         "add" => {
             let values = ask_task_input();
             let priority = values.0;
